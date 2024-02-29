@@ -1,0 +1,15 @@
+<resources>
+    <string name="app_name">WillowTrust</string>
+    <!-- Home/Budget Screen -->
+    <string name="home_screen_title">Willow Trust</string>
+    <string name="transactions_list_title">Transactions</string>
+    <!-- Create Budget Screen -->
+    <string name="create_budget_screen_title">Create Budget</string>
+    <!-- Transactions List Screen -->
+    <string name="transactions_screen_title">Transactions</string>
+    <string name="delete_transaction">Delete Transaction</string>
+    <!-- Add Transaction Screen -->
+    <string name="add_transaction_screen_title">Add Transaction</string>
+    <string name="no_budget_headline">Looks like you don\'t have any Budgets set-up</string>
+    <string name="create_budget_button">Create Budget</string>
+</resources>
