@@ -57,6 +57,7 @@ class HomeViewModel @Inject constructor(
     }
 
     fun updateSelectedBudget(budget: Budget) {
+        if(_uiState.value.selectedBudget?.budget?.id == budget.id) return
         viewModelScope.launch {
             homeRepository.updateSelectedBudget(budget.id)
         }

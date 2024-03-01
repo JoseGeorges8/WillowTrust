@@ -57,8 +57,6 @@ fun HomeScreenRoute(
     }, onCreateBudgetButtonPressed = {
         navController.navigate(Screens.CreateBudget.route)
     }, onNewBudgetSelected = {
-        val selectedBudget = viewModel.uiState.value.selectedBudget
-        if(selectedBudget?.budget?.id == it.id) return@HomeScreen
         viewModel.updateSelectedBudget(it)
     })
 }
