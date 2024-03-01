@@ -8,12 +8,17 @@ data class Budget (
     val name: String,
     val limit: Double,
 ) {
+
+
     fun toEntity() : BudgetEntity = BudgetEntity(
         id = id,
         name = name,
         limit = limit,
     )
 
+    override fun toString(): String {
+        return name
+    }
     companion object {
         fun fromEntity(entity: BudgetEntity) : Budget {
             return Budget(

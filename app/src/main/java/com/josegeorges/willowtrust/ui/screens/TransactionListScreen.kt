@@ -7,30 +7,50 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
-import com.josegeorges.willowtrust.R
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.NavBackStackEntry
+import androidx.navigation.NavController
 import com.josegeorges.willowtrust.data.models.transactions.Transaction
 import com.josegeorges.willowtrust.ui.composables.TransactionList
 import com.josegeorges.willowtrust.ui.viewmodels.TransactionListUiState
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
+import com.josegeorges.willowtrust.ui.viewmodels.TransactionsScreenViewModel
+
+@Composable
+fun TransactionListRoute(
+    navBackStackEntry: NavBackStackEntry,
+    navController: NavController
+) {
+    val budgetId: String = navBackStackEntry.arguments?.getString("budgetId") ?: ""
+    val viewModel = hiltViewModel<TransactionsScreenViewModel, TransactionsScreenViewModel.TransactionsScreenViewModelFactory> { factory ->
+        factory.create(budgetId)
+    }
+    val uiState: TransactionListUiState by viewModel.uiState.collectAsStateWithLifecycle()
+
+    LaunchedEffect(Unit) {
+        viewModel.fetchLatestTransactions()
+    }
+    TransactionListScreen(uiState, onTransactionLongPressed = {
+        viewModel.deleteTransaction(it)
+    }, onAddTransactionButtonPressed = {
+        navController.navigate("budgets/${budgetId}/add-transaction")
+    })
+}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TransactionListScreen(uiState: StateFlow<TransactionListUiState>, onTransactionLongPressed: (transaction: Transaction) -> Unit, onAddTransactionButtonPressed: () -> Unit) {
-    val state by uiState.collectAsState()
+private fun TransactionListScreen(uiState: TransactionListUiState, onTransactionLongPressed: (transaction: Transaction) -> Unit, onAddTransactionButtonPressed: () -> Unit) {
     Scaffold(
         topBar = {
             TopAppBar(
@@ -50,7 +70,7 @@ fun TransactionListScreen(uiState: StateFlow<TransactionListUiState>, onTransact
         }
     ) { innerPadding ->
         Column(modifier = Modifier.padding(innerPadding)) {
-            TransactionList(transactions = state.transactions, onTransactionLongPressed = { onTransactionLongPressed(it) })
+            TransactionList(transactions = uiState.transactions, onTransactionLongPressed = { onTransactionLongPressed(it) })
         }
     }
 }
@@ -59,5 +79,5 @@ fun TransactionListScreen(uiState: StateFlow<TransactionListUiState>, onTransact
 @Preview
 @Composable
 fun TransactionListScreenPreview() {
-    TransactionListScreen (MutableStateFlow(TransactionListUiState()), onTransactionLongPressed = {}, onAddTransactionButtonPressed = {})
+    TransactionListScreen (TransactionListUiState(), onTransactionLongPressed = {}, onAddTransactionButtonPressed = {})
 }

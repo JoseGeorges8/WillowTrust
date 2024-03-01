@@ -11,6 +11,7 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import kotlinx.coroutines.CoroutineDispatcher
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -23,14 +24,16 @@ class RepositoriesModule {
 
     @Provides
     fun provideBudgetRepository(
+        @IoDispatcher ioDispatcher: CoroutineDispatcher,
         budgetDataSource: BudgetDataSource
-    ): BudgetRepository = BudgetRepository(budgetDataSource)
+    ): BudgetRepository = BudgetRepository(ioDispatcher, budgetDataSource)
 
     @Provides
     fun provideHomeRepository(
+        @IoDispatcher ioDispatcher: CoroutineDispatcher,
         dataStore: DataStore<Preferences>,
         budgetRepository: BudgetRepository,
         transactionRepository: TransactionRepository
-    ): HomeRepository = HomeRepository(dataStore, budgetRepository, transactionRepository)
+    ): HomeRepository = HomeRepository(ioDispatcher, dataStore, budgetRepository, transactionRepository)
 
 }

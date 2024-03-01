@@ -10,7 +10,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
@@ -22,8 +22,8 @@ import com.josegeorges.willowtrust.data.models.budget.Budget
 
 @Composable
 fun CreateBudgetForm(modifier: Modifier, onCreateButtonPressed: (Budget) -> Unit) {
-    var name by remember { mutableStateOf("") }
-    var limit by remember { mutableStateOf("") }
+    var name by rememberSaveable { mutableStateOf("") }
+    var limit by rememberSaveable { mutableStateOf("") }
     val keyboardController = LocalSoftwareKeyboardController.current
     val createBudget = {
         val budget = Budget(

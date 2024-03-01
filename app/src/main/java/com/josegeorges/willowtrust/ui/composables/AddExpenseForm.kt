@@ -4,15 +4,18 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -23,11 +26,20 @@ import java.time.LocalDate
 
 @Composable
 fun AddExpenseForm(modifier: Modifier, onSaveButtonPressed: (Transaction) -> Unit) {
-    var amount by remember { mutableStateOf("") }
-    var institution by remember { mutableStateOf("") }
-    var transactionType by remember { mutableStateOf(TransactionType.Expense) }
-    var expenseCategory by remember { mutableStateOf(ExpenseCategory.Entertainment) }
-
+    var amount by rememberSaveable { mutableStateOf("") }
+    var institution by rememberSaveable { mutableStateOf("") }
+    var transactionType by rememberSaveable { mutableStateOf(TransactionType.Expense) }
+    var expenseCategory by rememberSaveable { mutableStateOf(ExpenseCategory.Entertainment) }
+    val keyboardController = LocalSoftwareKeyboardController.current
+    val addTransaction = {
+        val transaction = Transaction(
+            amount = amount.toDouble(),
+            institution = institution,
+            date = LocalDate.now(),
+            type = transactionType
+        )
+        onSaveButtonPressed(transaction)
+    }
     Column(
         modifier = modifier,
         verticalArrangement = Arrangement.SpaceBetween
@@ -66,21 +78,17 @@ fun AddExpenseForm(modifier: Modifier, onSaveButtonPressed: (Transaction) -> Uni
                 label = "Amount",
                 value = amount,
                 onValueChanged = { amount = it },
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal)
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal, imeAction = ImeAction.Done),
+                keyboardActions = KeyboardActions(onDone = {
+                    keyboardController?.hide()
+                    addTransaction()
+                })
             )
         }
         Button(
             modifier = Modifier.fillMaxWidth(),
             enabled = true,
-            onClick = {
-                val transaction = Transaction(
-                    amount = amount.toDouble(),
-                    institution = institution,
-                    date = LocalDate.now(),
-                    type = transactionType
-                )
-                onSaveButtonPressed(transaction)
-            }
+            onClick = addTransaction
         ) {
             Text("Add")
         }

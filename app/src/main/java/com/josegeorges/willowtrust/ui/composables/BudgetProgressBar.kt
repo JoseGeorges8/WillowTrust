@@ -6,7 +6,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
@@ -26,7 +26,7 @@ suspend fun loadProgress(totalProgress: Double, updateProgress: (Float) -> Unit)
 fun BudgetProgressBar(budgetWithDetails: BudgetWithDetails) {
     // Get the current expenses of the budget
     val totalProgress: Double = (budgetWithDetails.currentTotalExpenses / budgetWithDetails.budget.limit)
-    var currentProgress by remember { mutableFloatStateOf(0f) }
+    var currentProgress by rememberSaveable { mutableFloatStateOf(0f) }
 
     LaunchedEffect(Unit) {
         loadProgress(totalProgress = totalProgress) { progress ->
