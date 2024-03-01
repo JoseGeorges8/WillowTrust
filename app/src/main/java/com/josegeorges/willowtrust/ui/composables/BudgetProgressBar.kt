@@ -28,7 +28,8 @@ fun BudgetProgressBar(budgetWithDetails: BudgetWithDetails) {
     val totalProgress: Double = (budgetWithDetails.currentTotalExpenses / budgetWithDetails.budget.limit)
     var currentProgress by rememberSaveable { mutableFloatStateOf(0f) }
 
-    LaunchedEffect(Unit) {
+    LaunchedEffect(budgetWithDetails) {
+        currentProgress = 0f
         loadProgress(totalProgress = totalProgress) { progress ->
             currentProgress = progress
         }

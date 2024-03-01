@@ -2,6 +2,7 @@ package com.josegeorges.willowtrust.ui.screens
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -56,6 +57,8 @@ fun HomeScreenRoute(
     }, onCreateBudgetButtonPressed = {
         navController.navigate(Screens.CreateBudget.route)
     }, onNewBudgetSelected = {
+        val selectedBudget = viewModel.uiState.value.selectedBudget
+        if(selectedBudget?.budget?.id == it.id) return@HomeScreen
         viewModel.updateSelectedBudget(it)
     })
 }
@@ -101,7 +104,9 @@ private fun HomeScreen(
                         options = state.budgets,
                         onOptionSelected = onNewBudgetSelected,
                     )
-                    BudgetProgressBar(state.selectedBudget!!)
+                    Box(modifier = Modifier.padding(32.dp)) {
+                        BudgetProgressBar(state.selectedBudget!!)
+                    }
                     Row {
                         Text(
                             modifier = Modifier
