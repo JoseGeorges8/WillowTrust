@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.room.Room
 import com.josegeorges.willowtrust.data.db.AppDatabase
 import com.josegeorges.willowtrust.data.db.daos.BudgetDao
+import com.josegeorges.willowtrust.data.db.daos.TransactionCategoryDao
 import com.josegeorges.willowtrust.data.db.daos.TransactionDao
 import dagger.Module
 import dagger.Provides
@@ -24,8 +25,8 @@ object DatabaseModule {
         context.applicationContext,
         AppDatabase::class.java,
         AppDatabase.DB_NAME
-    ).build()
-
+    ).createFromAsset("database/app.db")
+        .build()
 
     @Provides
     fun provideTransactionDao(
@@ -36,6 +37,11 @@ object DatabaseModule {
     fun provideBudgetDao(
         db: AppDatabase
     ): BudgetDao = db.budgetDao()
+
+    @Provides
+    fun provideTransactionCategoryDao(
+        db: AppDatabase
+    ): TransactionCategoryDao = db.transactionCategoryDao()
 
 
 }

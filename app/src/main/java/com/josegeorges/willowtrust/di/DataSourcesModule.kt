@@ -2,6 +2,8 @@ package com.josegeorges.willowtrust.di
 
 import com.josegeorges.willowtrust.data.dataSources.budget.BudgetDataSource
 import com.josegeorges.willowtrust.data.dataSources.budget.BudgetDataSourceImpl
+import com.josegeorges.willowtrust.data.dataSources.expenses.ExpenseCategoryDataSource
+import com.josegeorges.willowtrust.data.dataSources.expenses.ExpenseCategoryDataSourceImpl
 import com.josegeorges.willowtrust.data.dataSources.transactions.TransactionDataSource
 import com.josegeorges.willowtrust.data.dataSources.transactions.TransactionDataSourceImpl
 import dagger.Binds
@@ -22,5 +24,10 @@ abstract class DataSourcesModule {
     abstract fun bindBudgetDataSource(
         budgetDataSourceImpl: BudgetDataSourceImpl
     ): BudgetDataSource
+
+    @Binds
+    abstract fun bindExpenseCategoryDataSource(
+        expenseCategoryDataSourceImpl: ExpenseCategoryDataSourceImpl
+    ): ExpenseCategoryDataSource
 
 }

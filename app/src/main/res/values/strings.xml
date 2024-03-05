@@ -1,7 +1,9 @@
 <resources>
     <string name="app_name">WillowTrust</string>
-    <!-- Home/Budget Screen -->
-    <string name="home_screen_title">Willow Trust</string>
+    <string name="currency_usd">USD</string>
+    <string name="currency_cad">CAD</string>
+    <!-- Budget Screen -->
+    <string name="budget_screen_title">Willow Trust</string>
     <string name="transactions_list_title">Transactions</string>
     <!-- Create Budget Screen -->
     <string name="create_budget_screen_title">Create Budget</string>

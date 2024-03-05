@@ -14,31 +14,36 @@ val previewTransactions = listOf(
         institution = "Sake Sushi",
         amount = 500.0,
         date = LocalDate.parse("2024-02-11"),
-        type = TransactionType.Income
+        type = TransactionType.Income,
+        category = "Restaurant"
     ),
     Transaction(
         institution = "Sake Sushi",
         amount = 100.0,
         date = LocalDate.parse("2024-02-11"),
-        type = TransactionType.Income
+        type = TransactionType.Income,
+        category = "Restaurant"
     ),
     Transaction(
         institution = "Sake Sushi",
         amount = 100.0,
         date = LocalDate.parse("2024-02-11"),
-        type = TransactionType.Income
+        type = TransactionType.Income,
+        category = "Restaurant"
     ),
     Transaction(
         institution = "Sake Sushi",
         amount = 100.0,
         date = LocalDate.parse("2024-02-11"),
-        type = TransactionType.Income
+        type = TransactionType.Income,
+        category = "Restaurant"
     ),
     Transaction(
         institution = "Sake Sushi",
         amount = 100.0,
         date = LocalDate.parse("2024-02-11"),
-        type = TransactionType.Income
+        type = TransactionType.Income,
+        category = "Restaurant"
     ),
 )
 

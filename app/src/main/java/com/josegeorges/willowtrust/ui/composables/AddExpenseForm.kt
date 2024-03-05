@@ -19,24 +19,24 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.josegeorges.willowtrust.data.models.transactions.ExpenseCategory
 import com.josegeorges.willowtrust.data.models.transactions.Transaction
 import com.josegeorges.willowtrust.data.models.transactions.TransactionType
 import java.time.LocalDate
 
 @Composable
-fun AddExpenseForm(modifier: Modifier, onSaveButtonPressed: (Transaction) -> Unit) {
+fun AddExpenseForm(modifier: Modifier, expenseCategories: List<String> = listOf(), onSaveButtonPressed: (Transaction) -> Unit) {
     var amount by rememberSaveable { mutableStateOf("") }
     var institution by rememberSaveable { mutableStateOf("") }
     var transactionType by rememberSaveable { mutableStateOf(TransactionType.Expense) }
-    var expenseCategory by rememberSaveable { mutableStateOf(ExpenseCategory.Entertainment) }
+    var expenseCategory by rememberSaveable { mutableStateOf("") }
     val keyboardController = LocalSoftwareKeyboardController.current
     val addTransaction = {
         val transaction = Transaction(
             amount = amount.toDouble(),
             institution = institution,
             date = LocalDate.now(),
-            type = transactionType
+            type = transactionType,
+            category = expenseCategory
         )
         onSaveButtonPressed(transaction)
     }
@@ -57,19 +57,18 @@ fun AddExpenseForm(modifier: Modifier, onSaveButtonPressed: (Transaction) -> Uni
                 },
             )
             AnimatedVisibility(visible = transactionType == TransactionType.Expense) {
-                FormDropdownField(
-                    modifier = Modifier.fillMaxWidth(),
-                    label = "Expense Category",
-                    value = expenseCategory.name,
-                    options = ExpenseCategory.entries,
-                    onOptionSelected = {
+                AutocompleteFormField(
+                    items = expenseCategories,
+                    onValueChanged = {
                         expenseCategory = it
                     },
+                    label = "Expense Category",
+                    selectedItem = expenseCategory
                 )
             }
             FormTextField(
                 modifier = Modifier.fillMaxWidth(),
-                label = "Institution",
+                label = "Vendor",
                 value = institution,
                 onValueChanged = { institution = it },
             )

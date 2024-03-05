@@ -21,14 +21,12 @@ import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavController
 import com.josegeorges.willowtrust.data.models.transactions.Transaction
 import com.josegeorges.willowtrust.ui.composables.AddExpenseForm
+import com.josegeorges.willowtrust.ui.viewmodels.AddTransactionUiState
 import com.josegeorges.willowtrust.ui.viewmodels.AddTransactionViewModel
 
 @Composable
 fun AddExpenseScreenRoute(navBackStackEntry: NavBackStackEntry, navController: NavController) {
-    val budgetId: String = navBackStackEntry.arguments?.getString("budgetId") ?: ""
-    val viewModel = hiltViewModel<AddTransactionViewModel, AddTransactionViewModel.AddTransactionViewModelFactory> { factory ->
-        factory.create(budgetId)
-    }
+    val viewModel = hiltViewModel<AddTransactionViewModel>()
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val saved = uiState.transactionSaved
     if (saved) {
@@ -37,7 +35,7 @@ fun AddExpenseScreenRoute(navBackStackEntry: NavBackStackEntry, navController: N
         }
     }
 
-    AddExpenseScreen {
+    AddExpenseScreen(uiState) {
         Log.d("WillowTrust", "Saving transaction: ${it.type.name}: ${it.institution} for $${it.amount}")
         viewModel.addTransaction(it)
     }
@@ -46,6 +44,7 @@ fun AddExpenseScreenRoute(navBackStackEntry: NavBackStackEntry, navController: N
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun AddExpenseScreen(
+    uiState: AddTransactionUiState,
     onSaveButtonPressed: (Transaction) -> Unit
 ) {
     Scaffold(
@@ -59,7 +58,9 @@ private fun AddExpenseScreen(
         AddExpenseForm(
             modifier = Modifier
                 .padding(innerPadding)
-                .fillMaxHeight(), onSaveButtonPressed = onSaveButtonPressed
+                .fillMaxHeight(),
+            expenseCategories = uiState.expenseCategories.map { it.name },
+            onSaveButtonPressed = onSaveButtonPressed
         )
     }
 }
@@ -67,5 +68,5 @@ private fun AddExpenseScreen(
 @Preview
 @Composable
 fun AddExpenseFormPreview() {
-    AddExpenseScreen {}
+    AddExpenseScreen(AddTransactionUiState()) {}
 }

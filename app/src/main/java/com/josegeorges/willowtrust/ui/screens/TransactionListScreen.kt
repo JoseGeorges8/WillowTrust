@@ -32,10 +32,7 @@ fun TransactionListRoute(
     navBackStackEntry: NavBackStackEntry,
     navController: NavController
 ) {
-    val budgetId: String = navBackStackEntry.arguments?.getString("budgetId") ?: ""
-    val viewModel = hiltViewModel<TransactionsScreenViewModel, TransactionsScreenViewModel.TransactionsScreenViewModelFactory> { factory ->
-        factory.create(budgetId)
-    }
+    val viewModel = hiltViewModel<TransactionsScreenViewModel>()
     val uiState: TransactionListUiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     LaunchedEffect(Unit) {
@@ -44,7 +41,7 @@ fun TransactionListRoute(
     TransactionListScreen(uiState, onTransactionLongPressed = {
         viewModel.deleteTransaction(it)
     }, onAddTransactionButtonPressed = {
-        navController.navigate("budgets/${budgetId}/add-transaction")
+        navController.navigate(Screens.AddTransaction.route)
     })
 }
 

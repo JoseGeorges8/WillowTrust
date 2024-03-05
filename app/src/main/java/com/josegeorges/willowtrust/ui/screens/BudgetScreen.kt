@@ -8,8 +8,12 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -27,31 +31,49 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavController
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 import com.josegeorges.willowtrust.R
 import com.josegeorges.willowtrust.data.models.budget.Budget
-import com.josegeorges.willowtrust.data.models.transactions.TransactionType
 import com.josegeorges.willowtrust.data.models.transactions.previewBudgetWithDetails
 import com.josegeorges.willowtrust.ui.composables.BudgetProgressBar
 import com.josegeorges.willowtrust.ui.composables.FormDropdownField
 import com.josegeorges.willowtrust.ui.composables.TransactionList
-import com.josegeorges.willowtrust.ui.viewmodels.HomeUiState
-import com.josegeorges.willowtrust.ui.viewmodels.HomeViewModel
+import com.josegeorges.willowtrust.ui.viewmodels.BudgetUiState
+import com.josegeorges.willowtrust.ui.viewmodels.BudgetViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
+
 @Composable
-fun HomeScreenRoute(
+fun BudgetNavHost() {
+    val navController = rememberNavController()
+
+    NavHost(
+        navController = navController,
+        startDestination = Screens.TransactionList.route,
+    ) {
+        composable(Screens.Budget.route) { BudgetScreenRoute(it, navController) }
+        composable(Screens.CreateBudget.route) { CreateBudgetScreenRoute(it, navController) }
+        composable(Screens.TransactionList.route) { TransactionListRoute(it, navController) }
+        composable(Screens.AddTransaction.route) { AddExpenseScreenRoute(navBackStackEntry = it, navController = navController) }
+    }
+}
+
+@Composable
+fun BudgetScreenRoute(
     navBackStackEntry: NavBackStackEntry,
     navController: NavController
 ) {
-    val viewModel: HomeViewModel = hiltViewModel<HomeViewModel>()
+    val viewModel: BudgetViewModel = hiltViewModel<BudgetViewModel>()
 
     LaunchedEffect(Unit) {
         viewModel.fetchSelectedBudget()
         viewModel.fetchBudgets()
     }
 
-    HomeScreen(viewModel.uiState, onViewAllTransactionsButtonPressed = {
+    BudgetScreen(viewModel.uiState, onViewAllTransactionsButtonPressed = {
         val selectedBudget = viewModel.uiState.value.selectedBudget
         if (selectedBudget != null) navController.navigate("budgets/${selectedBudget.budget.id}/transactions")
     }, onCreateBudgetButtonPressed = {
@@ -61,23 +83,15 @@ fun HomeScreenRoute(
     })
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun HomeScreen(
-    uiState: StateFlow<HomeUiState>,
+private fun BudgetScreen(
+    uiState: StateFlow<BudgetUiState>,
     onViewAllTransactionsButtonPressed: () -> Unit,
     onCreateBudgetButtonPressed: () -> Unit,
     onNewBudgetSelected: (Budget) -> Unit
 ) {
     val state by uiState.collectAsStateWithLifecycle()
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                modifier = Modifier.background(color = MaterialTheme.colorScheme.primary),
-                title = { Text(text = "Willow Trust") },
-            )
-        },
-    ) { innerPadding ->
+    Scaffold { innerPadding ->
         when (state.selectedBudget) {
             null -> {
                 Column(
@@ -127,9 +141,9 @@ private fun HomeScreen(
 
 @Preview
 @Composable
-fun PreviewHomeScreenWithoutBudget() {
-    HomeScreen(
-        MutableStateFlow(HomeUiState(selectedBudget = null)),
+fun PreviewBudgetScreenWithoutBudget() {
+    BudgetScreen(
+        MutableStateFlow(BudgetUiState(selectedBudget = null)),
         onViewAllTransactionsButtonPressed = {},
         onCreateBudgetButtonPressed = {},
         onNewBudgetSelected = {}
@@ -138,9 +152,9 @@ fun PreviewHomeScreenWithoutBudget() {
 
 @Preview
 @Composable
-fun PreviewHomeScreenWithBudget() {
-    HomeScreen(
-        MutableStateFlow(HomeUiState(selectedBudget = previewBudgetWithDetails)),
+fun PreviewBudgetScreenWithBudget() {
+    BudgetScreen(
+        MutableStateFlow(BudgetUiState(selectedBudget = previewBudgetWithDetails)),
         onViewAllTransactionsButtonPressed = {},
         onCreateBudgetButtonPressed = {},
         onNewBudgetSelected = {}

@@ -8,30 +8,28 @@ import com.josegeorges.willowtrust.data.models.budget.BudgetWithDetails
 import com.josegeorges.willowtrust.data.repositories.BudgetRepository
 import com.josegeorges.willowtrust.data.repositories.HomeRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.last
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-data class HomeUiState(
+data class BudgetUiState(
     val selectedBudget: BudgetWithDetails? = null,
     val budgets: List<Budget> = listOf(),
 )
 
 @HiltViewModel
-class HomeViewModel @Inject constructor(
+class BudgetViewModel @Inject constructor(
     val savedStateHandle: SavedStateHandle,
     private val homeRepository: HomeRepository,
     private val budgetRepository: BudgetRepository,
 ) : ViewModel() {
 
     // Expose screen UI state
-    private val _uiState = MutableStateFlow(HomeUiState())
-    val uiState: StateFlow<HomeUiState> = _uiState.asStateFlow()
+    private val _uiState = MutableStateFlow(BudgetUiState())
+    val uiState: StateFlow<BudgetUiState> = _uiState.asStateFlow()
 
     init {
         viewModelScope.launch {

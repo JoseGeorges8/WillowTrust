@@ -3,7 +3,9 @@ package com.josegeorges.willowtrust.ui.viewmodels
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.josegeorges.willowtrust.data.models.expenses.ExpenseCategory
 import com.josegeorges.willowtrust.data.models.transactions.Transaction
+import com.josegeorges.willowtrust.data.repositories.ExpenseCategoryRepository
 import com.josegeorges.willowtrust.data.repositories.TransactionRepository
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
@@ -15,21 +17,22 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 data class AddTransactionUiState(
+    val expenseCategories: List<ExpenseCategory> = listOf(),
     val transactionSaved: Boolean = false,
 )
 
-@HiltViewModel(assistedFactory = AddTransactionViewModel.AddTransactionViewModelFactory::class)
-class AddTransactionViewModel @AssistedInject constructor(
-    @Assisted val budgetId: String,
+@HiltViewModel
+class AddTransactionViewModel @Inject constructor(
     val savedStateHandle: SavedStateHandle,
-    private val transactionRepository: TransactionRepository
+    private val transactionRepository: TransactionRepository,
+    private val expenseCategoryRepository: ExpenseCategoryRepository
 ) : ViewModel() {
 
-    @AssistedFactory
-    interface AddTransactionViewModelFactory {
-        fun create(budgetId: String): AddTransactionViewModel
+    init {
+        fetchExpenseCategories()
     }
 
     // Expose screen UI state
@@ -37,10 +40,20 @@ class AddTransactionViewModel @AssistedInject constructor(
     val uiState: StateFlow<AddTransactionUiState> = _uiState.asStateFlow()
 
     // Handle business logic
+    private fun fetchExpenseCategories() {
+        viewModelScope.launch {
+            val categories = expenseCategoryRepository.getExpenseCategories()
+            _uiState.update { currentState ->
+                currentState.copy(
+                    expenseCategories = categories
+                )
+            }
+        }
+    }
 
     fun addTransaction(transaction: Transaction) {
         viewModelScope.launch(Dispatchers.IO) {
-            transactionRepository.saveTransaction(transaction, budgetId)
+            transactionRepository.saveTransaction(transaction)
             _uiState.update { currentState ->
                 currentState.copy(
                     transactionSaved = true
